@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Timeline</title>
+		<meta charset="utf-8" />
+		<style>
+			#main {
+				font-family: Arial, sans-serif;
+				font-size: 16px;
+				color: #888;
+				display: flex;
+				margin: 0;
+				background-color: #000;
+				height: 100vh;
+				justify-content: center;
+				align-items: center;
+				overflow-x: hidden;
+			}
+            
+			.content {
+				flex: 1;
+				position: relative;
+			}
+
+			#time {
+				position: absolute;
+				white-space: nowrap;
+			}
+
+			.ticks {
+				margin-left: 30px;
+			}
+
+			.big-tick {
+				display: inline-block;
+				border-left: 1px solid #888;
+				height: 10px;
+				margin-right: 50px;
+			}
+
+			.mid-tick {
+				display: inline-block;
+				border-left: 1px solid #888;
+				height: 6px;
+				margin-right: 50px;
+			}
+
+			.tick {
+				display: inline-block;
+				border-left: 1px solid #888;
+				height: 3px;
+				margin-right: 50px;
+			}
+
+			.year {
+				margin-right: 295px;
+			}
+
+			.year.current {
+				font-size: 2rem;
+				font-weight: 600;
+				color: #fff;
+				margin-right: 275px;
+			}
+
+			#description {
+				color: #fff;
+				width: 300px;
+				margin-bottom: 20px;
+			}
+
+			#img-container {
+				margin-top: 100px;
+			}
+
+			.img {
+				height: 200px;
+				border-radius: 30px;
+			}
+
+			.left-curtain {
+				width: 30%;
+				height: 100vh;
+				position: absolute;
+				background-color: #000;
+				left: 0;
+				top: 0;
+				display: flex;
+				justify-content: right;
+				padding-right: 20px;
+				align-items: center;
+			}
+
+			.right-curtain {
+				width: 30%;
+				height: 100vh;
+				position: absolute;
+				background-color: #000;
+				right: 0;
+				top: 0;
+				display: flex;
+				justify-content: left;
+				padding-left: 20px;
+				align-items: center;
+			}
+
+			#prev::after {
+				content: "\25c0";
+				font-size: 3rem;
+				flex: 1;
+			}
+
+			#next::after {
+				content: "\25b6";
+				font-size: 3rem;
+				flex: 1;
+			}
+
+			#prev.enabled, #next.enabled {
+				color: #fff;
+				cursor: pointer;
+			}
+
+			.animate-year {
+				font-size: 2rem;
+				font-weight: 600;
+				color: #fff;
+				animation: doAnimate 1s;
+				margin-right: 275px;
+			}
+
+			@keyframes doAnimate {
+				from {
+					font-size: 16px;
+					font-weight: normal;
+					color: #aaa;
+					margin-right: 310px;
+				}
+
+				to {
+					font-size: 2rem;
+					font-weight: 600;
+					color: #fff;
+					margin-right: 275px;
+				}
+			}
+
+			.animate-year-back {
+				font-size: 16px;
+				font-weight: normal;
+				color: #aaa;
+				animation: doAnimateBack 1s;
+				margin-left: 15px;
+			}
+
+			@keyframes doAnimateBack {
+				from {
+					font-size: 2rem;
+					font-weight: 600;
+					color: #fff;
+					margin-right: 275px;
+				}
+
+				to {
+					font-size: 16px;
+					font-weight: normal;
+					color: #aaa;
+					margin-left: 15px;
+				}
+			}
+
+			.disappear {
+				opacity: 0;
+				animation: animateDisappear 1s cubic-bezier(0.1, 0.7, 1.0, 0.1);
+			}
+
+			@keyframes animateDisappear {
+				from {
+					opacity: 1;
+				}
+
+				to {
+					opacity: 0;
+				}
+			}
+
+			.reappear {
+				opacity: 1;
+				animation: animateReappear .6s cubic-bezier(.29, 1.01, 1, -0.68);
+			}
+
+			@keyframes animateReappear {
+				from {
+					opacity: 0;
+				}
+
+				to {
+					opacity: 1;
+				}
+			}
+		</style>  
+	</head>
+	<body id="main">
+		<section class="content">
+			<div id="description">
+			</div>
+			<div id="time">
+			</div>
+			<div id="img-container">
+			</div>
+		</section>
+		<div class="left-curtain">
+			<div id="prev"></div>
+		</div>
+		<div class="right-curtain">
+			<div id="next" class="enabled"></div>
+		</div>
+
+		<script type="module">
+			const data = [
+				{
+						year: 2013,
+						content: '1 Lorem ipsum dolor sit amet, vel ullum senserit voluptatibus te. Per te iudico oratio prodesset, sale inermis invidunt at sed. Ne vim vide vivendum persequeris, pro an periculis patrioque dissentiunt. Ei dolor ullamcorper sea.',
+						img: 'cat-nap.jpg'
+				},
+				{
+						year: 2014,
+						content: '2 Lorem ipsum dolor sit amet, vel ullum senserit voluptatibus te. Per te iudico oratio prodesset, sale inermis invidunt at sed. Ne vim vide vivendum persequeris, pro an periculis patrioque dissentiunt. Ei dolor ullamcorper sea.',
+						img: 'sleep.jpg'
+				},
+				{
+						year: 2015,
+						content: '3 Lorem ipsum dolor sit amet, vel ullum senserit voluptatibus te. Per te iudico oratio prodesset, sale inermis invidunt at sed. Ne vim vide vivendum persequeris, pro an periculis patrioque dissentiunt. Ei dolor ullamcorper sea.',
+						img: 'cat-nap.jpg'
+				},
+				{
+						year: 2016,
+						content: '4 Lorem ipsum dolor sit amet, vel ullum senserit voluptatibus te. Per te iudico oratio prodesset, sale inermis invidunt at sed. Ne vim vide vivendum persequeris, pro an periculis patrioque dissentiunt. Ei dolor ullamcorper sea.',
+						img: 'sleep.jpg'
+				},
+				{
+						year: 2017,
+						content: '5 Lorem ipsum dolor sit amet, vel ullum senserit voluptatibus te. Per te iudico oratio prodesset, sale inermis invidunt at sed. Ne vim vide vivendum persequeris, pro an periculis patrioque dissentiunt. Ei dolor ullamcorper sea.',
+						img: 'cat-nap.jpg'
+				}
+			];
+
+			(function(data) {
+				let isAnimating = false;
+				let currentIndex = 1;
+
+				function renderTimeline() {
+					let str = '<div>';
+					let str2 = '<div class="ticks">';
+
+					for (let i = 0; i < data.length; i++) {
+						const year = data[i].year;
+
+						if (i === 0) {
+							str = `${str}<span class="year current">${year}</span>`;
+						} else {
+							str = `${str}<span class="year">${year}</span>`;
+						}
+
+						if (i < data.length - 1) {
+							str2 = `${str2}
+								<div class="big-tick"></div>
+								<div class="tick"></div>
+								<div class="tick"></div>
+								<div class="mid-tick"></div>
+								<div class="tick"></div>
+								<div class="tick"></div>
+							`;
+						} else {
+							str2 = `${str2}
+								<div class="big-tick"></div>
+							`;
+						}
+					}
+				
+					str = `${str}</div>`;
+					str2 = `${str2}</div>`;
+
+					document.getElementById('time').innerHTML = str + str2;
+				}
+
+				function disappear() {
+					document.getElementById('description').className = 'disappear';
+					document.getElementById('img-container').className = 'disappear';
+					setTimeout(() => {
+						document.getElementById('description').innerHTML = data[currentIndex].content;
+						document.getElementById('img-container').innerHTML = `<img src="${data[currentIndex].img}" class="img">`;
+					}, 1000);
+				}
+
+				function reappear() {
+					document.getElementById('description').className = 'reappear';
+					document.getElementById('img-container').className = 'reappear';
+				}
+
+				function advanceTimeline() {
+					if (currentIndex === data.length) {
+						return;
+					}
+					if (currentIndex === data.length - 1) {
+						document.getElementById('next').className = '';
+					}
+
+					isAnimating = true;
+					const orig = parseInt(document.getElementById('time').style.left, 10);
+					disappear();
+					
+					const tl = setInterval(() => {
+						let left = parseInt(document.getElementById('time').style.left, 10);
+
+						if (left > -330 + orig) {
+							document.getElementById('time').style.left = `${left -= 30}px`;
+						} else {
+							clearInterval(tl);
+							isAnimating = false;
+							reappear();
+
+							if (document.querySelector('.year.current')) {
+								document.querySelector('.year.current').className = 'year';
+							}
+							if (document.querySelector('.year.animate-year')) {
+								document.querySelector('.year.animate-year').className = 'year';
+							}
+							document.querySelector(`.year:nth-child(${++currentIndex})`).className = 'year animate-year';
+							if (currentIndex > 1) {
+								document.getElementById('prev').className = 'enabled';
+							}
+						}
+					}, 100);
+				}
+
+				function reverseTimeline() {
+					if (currentIndex === 1) {
+						return;
+					}
+					if (currentIndex === 2) {
+						document.getElementById('prev').className = '';
+					}
+
+					isAnimating = true;
+					const orig = parseInt(document.getElementById('time').style.left, 10);
+					document.querySelector('.year.animate-year').className = 'year animate-year-back';
+					disappear();
+					
+					const tl = setInterval(() => {
+						let left = parseInt(document.getElementById('time').style.left, 10);
+
+						if (left < 330 + orig) {
+							document.getElementById('time').style.left = `${left += 30}px`;
+						} else {
+							clearInterval(tl);
+							isAnimating = false;
+							reappear();
+
+							if (document.querySelector('.year.current')) {
+								document.querySelector('.year.current').className = 'year';
+							}
+							if (document.querySelector('.year.animate-year-back')) {
+								document.querySelector('.year.animate-year-back').className = 'year';
+							}
+							document.querySelector(`.year:nth-child(${--currentIndex})`).className = 'year animate-year';
+							if (currentIndex < data.length) {
+								document.getElementById('next').className = 'enabled';
+							}
+						}
+					}, 100);
+				}
+
+				function events() {
+					document.getElementById('next').addEventListener('click', e => {
+						if (!isAnimating) {
+							advanceTimeline();
+						}
+					}, false);
+
+					document.getElementById('prev').addEventListener('click', e => {
+						if (!isAnimating) {
+							reverseTimeline();
+						}
+					}, false);
+
+					window.addEventListener('resize', () => document.querySelector('.content').style.marginLeft = `${document.querySelector('.left-curtain').clientWidth}px`, false);
+				}
+			
+				function init() {
+					events();
+					document.querySelector('.content').style.marginLeft = `${document.querySelector('.left-curtain').clientWidth}px`;
+					document.getElementById('time').style.left = 0;
+					renderTimeline();
+					document.getElementById('description').innerHTML = data[0].content;
+					document.getElementById('img-container').innerHTML = `<img src="${data[0].img}" class="img">`;
+				}
+				
+				return {
+					init
+				};
+			})(data).init();
+		</script>
+	</body>
+</html>
